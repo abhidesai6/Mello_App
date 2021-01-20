@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:mello1/api.dart';
@@ -15,6 +16,8 @@ class PodcastScreen extends StatefulWidget {
 }
 
 class _PodcastScreenState extends State<PodcastScreen> {
+  AudioPlayer audioPlayer = AudioPlayer();
+  //AudioPlayer audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
   SharedPreferences sharedPreferences;
   String username;
   String id;
@@ -25,19 +28,42 @@ class _PodcastScreenState extends State<PodcastScreen> {
   void initState() {
     super.initState();
     getcredentials();
-    
   }
 
   getcredentials() async {
     sharedPreferences = await SharedPreferences.getInstance();
     username = sharedPreferences.getString("user_name");
-    id = sharedPreferences.getString("id");
+    id = sharedPreferences.getString("token");
+    print(id);
     // setState(() {});
     // // ignore: unnecessary_statements
     // (() {
     //   username = username1.toUpperCase() + username1.substring(1);
     // });
     // username = username1.toUpperCase();
+  }
+
+  play(String url) async {
+    int result = await audioPlayer.play(url);
+    if (result == 1) {
+      // success
+    }
+  }
+
+  pause() async {
+    int result = await audioPlayer.pause();
+  }
+
+  stop() async {
+    int result = await audioPlayer.stop();
+  }
+
+  resume() async {
+    int result = await audioPlayer.resume();
+  }
+
+  seek() async {
+    int result = await audioPlayer.seek(Duration(milliseconds: 1200));
   }
 
   @override
@@ -382,7 +408,7 @@ class _PodcastScreenState extends State<PodcastScreen> {
     });
     print("Calling");
     Map data = {
-      'id': "6",
+      'token': id,
       'Category_id': 'for_students',
     };
     // print(newPassword);
@@ -410,9 +436,9 @@ class _PodcastScreenState extends State<PodcastScreen> {
         // print(" User name ${user['user_name']}");
         //  savePref(1, user['user_name'], user['email'], user['id']);
         //savePref(1, name, email);
-        _scaffoldKey.currentState
-            // ignore: deprecated_member_use
-            .showSnackBar(SnackBar(content: Text("${resposne['success']}")));
+        // _scaffoldKey.currentState
+        //     // ignore: deprecated_member_use
+        //     .showSnackBar(SnackBar(content: Text("${resposne['success']}")));
       } else {
         print(" ${resposne['error']}");
       }
@@ -424,5 +450,16 @@ class _PodcastScreenState extends State<PodcastScreen> {
           // ignore: deprecated_member_use
           .showSnackBar(SnackBar(content: Text("Please Try again")));
     }
+  }
+  savePref(int value, String name, String email, String id,String token) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    print(token);
+    preferences.setInt("value", value);
+    preferences.setString("user_name", name);
+    preferences.setString("email", email);
+    preferences.setString("id", id);
+    preferences.setString("token", token);
+    // ignore: deprecated_member_use
+    preferences.commit();
   }
 }

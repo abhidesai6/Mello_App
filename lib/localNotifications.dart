@@ -1,102 +1,103 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class LocalNotifiaction extends StatefulWidget {
-  @override
-  _LocalNotifiactionState createState() => _LocalNotifiactionState();
-}
+// class LocalNotifiaction extends StatefulWidget {
+//   @override
+//   _LocalNotifiactionState createState() => _LocalNotifiactionState();
+// }
 
-class _LocalNotifiactionState extends State<LocalNotifiaction> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  AndroidInitializationSettings androidInitializationSettings;
-  IOSInitializationSettings iosInitializationSettings;
-  InitializationSettings initializationSettings;
+// class _LocalNotifiactionState extends State<LocalNotifiaction> {
+//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//       FlutterLocalNotificationsPlugin();
+//   AndroidInitializationSettings androidInitializationSettings;
+//   IOSInitializationSettings iosInitializationSettings;
+//   InitializationSettings initializationSettings;
 
-  @override
-  void initState() {
-    super.initState();
-    initializing();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     initializing();
+//   }
+//    Future<void> notification() async {
+//     AndroidNotificationDetails androidNotificationDetails =
+//         AndroidNotificationDetails(
+//             'Channel ID', 'Channel title', 'channel body',
+//             priority: Priority.high,
+//             importance: Importance.max,
+//             ticker: 'test');
 
-  void initializing() async {
-    androidInitializationSettings = AndroidInitializationSettings('app_icon');
-    iosInitializationSettings = IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    initializationSettings = InitializationSettings(
-        androidInitializationSettings, iosInitializationSettings);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
-  }
+//     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
 
-  void _showNotifications() async {
-    await notification();
-  }
+//     NotificationDetails notificationDetails =
+//         NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
+//     await flutterLocalNotificationsPlugin.show(
+//         0, 'Hello there', 'please subscribe my channel', notificationDetails);
+//   }
 
-  void _showNotificationsAfterSecond() async {
-    await notificationAfterSec();
-  }
+//   Future<void> notificationAfterSec() async {
+//     var timeDelayed = DateTime.now().add(Duration(seconds: 5));
+//     AndroidNotificationDetails androidNotificationDetails =
+//         AndroidNotificationDetails(
+//             'second channel ID', 'second Channel title', 'second channel body',
+//             priority: Priority.high,
+//             importance: Importance.max,
+//             ticker: 'test');
 
-  Future<void> notification() async {
-    AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-            'Channel ID', 'Channel title', 'channel body',
-            priority: Priority.high,
-            importance: Importance.max,
-            ticker: 'test');
+//     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
 
-    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+//     NotificationDetails notificationDetails =
+//         NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
+//     await flutterLocalNotificationsPlugin.schedule(1, 'Hello there',
+//         'please subscribe my channel', timeDelayed, notificationDetails);
+//   }
 
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'Hello there', 'please subscribe my channel', notificationDetails);
-  }
+//   void initializing() async {
+//     androidInitializationSettings = AndroidInitializationSettings('app_icon');
+//     iosInitializationSettings = IOSInitializationSettings(
+//         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+//     initializationSettings = InitializationSettings(
+//         android: androidNotificationDetails, iOS: iosNotificationDetails);
+//     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+//         onSelectNotification: onSelectNotification);
+//   }
 
-  Future<void> notificationAfterSec() async {
-    var timeDelayed = DateTime.now().add(Duration(seconds: 5));
-    AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-            'second channel ID', 'second Channel title', 'second channel body',
-            priority: Priority.high,
-            importance: Importance.max,
-            ticker: 'test');
+//   void _showNotifications() async {
+//     await notification();
+//   }
 
-    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+//   void _showNotificationsAfterSecond() async {
+//     await notificationAfterSec();
+//   }
 
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-    await flutterLocalNotificationsPlugin.schedule(1, 'Hello there',
-        'please subscribe my channel', timeDelayed, notificationDetails);
-  }
+ 
 
-  Future onSelectNotification(String payLoad) {
-    if (payLoad != null) {
-      print(payLoad);
-    }
+//   Future onSelectNotification(String payLoad) {
+//     if (payLoad != null) {
+//       print(payLoad);
+//     }
 
-    // we can set navigator to navigate another screen
-  }
+//     // we can set navigator to navigate another screen
+//   }
 
-  Future onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(body),
-      actions: <Widget>[
-        CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () {
-              print("");
-            },
-            child: Text("Okay")),
-      ],
-    );
-  }
+//   Future onDidReceiveLocalNotification(
+//       int id, String title, String body, String payload) async {
+//     return CupertinoAlertDialog(
+//       title: Text(title),
+//       content: Text(body),
+//       actions: <Widget>[
+//         CupertinoDialogAction(
+//             isDefaultAction: true,
+//             onPressed: () {
+//               print("");
+//             },
+//             child: Text("Okay")),
+//       ],
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }

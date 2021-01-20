@@ -262,11 +262,11 @@ class _LoginScreenState extends State<LoginScreen> {
       print(resposne.toString());
       if (resposne['error'] == null) {
         Map<String, dynamic> user = resposne['fruits_details'];
-        print(" UserName ${user['user_name']}");
+        print(" UserName ${user['token']}");
         _scaffoldKey.currentState
             // ignore: deprecated_member_use
             .showSnackBar(SnackBar(content: Text("${resposne['success']}")));
-        savePref(1, user['user_name'], user['email'], user['id'].toString());
+        savePref(1, user['user_name'], user['email'], user['id'].toString(),user['token']);
         
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) => HomePage(user['user_name'], user['email'])));
@@ -283,13 +283,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  savePref(int value, String name, String email, String id) async {
+  savePref(int value, String name, String email, String id,String token) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
+    print(token);
     preferences.setInt("value", value);
     preferences.setString("user_name", name);
     preferences.setString("email", email);
     preferences.setString("id", id);
+    preferences.setString("token", token);
     // ignore: deprecated_member_use
     preferences.commit();
   }
