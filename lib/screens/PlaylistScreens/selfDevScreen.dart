@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mello1/api.dart';
 import 'package:mello1/drawerScreen.dart';
+import 'package:mello1/screens/PlaylistScreens/audioListScreen.dart';
 import 'package:mello1/screens/PlaylistScreens/motivationScreen.dart';
 import 'package:mello1/screens/PlaylistScreens/myPlaylistScreen.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +19,7 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
   SharedPreferences sharedPreferences;
   String username;
   String id;
+  List<String> categorylist = List<String>();
   bool isLoading = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   TextEditingController _oldPassword = new TextEditingController();
@@ -25,6 +27,7 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
   void initState() {
     super.initState();
     getcredentials();
+    categoryList();
   }
 
   getcredentials() async {
@@ -113,6 +116,7 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
                                                       .withAlpha(30),
                                                   onTap: () {
                                                     print('Card tapped.');
+                                                    categoryList();
                                                   },
                                                   child: Stack(
                                                     children: [
@@ -284,25 +288,29 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
                                       ),
                                       Container(
                                         height: height * 0.55,
-                                        width: width * 0.8,
+                                        width: width * 0.95,
                                         child: Center(
-                                          child: ListView(
-                                            children: [
-                                              Divider(height: 0.1),
-                                              _createMusicItem("Confidence"),
-                                              Divider(height: 0.1),
-                                              _createMusicItem("Self-Love"),
-                                              Divider(height: 0.1),
-                                              _createMusicItem(
-                                                  "Handelinf Rejection"),
-                                              Divider(height: 0.1),
-                                              _createMusicItem("Proactiveness"),
-                                              Divider(height: 0.1),
-                                              _createMusicItem("Creativity"),
-                                              Divider(height: 0.1),
-                                              _createMusicItem("Concentration"),
-                                              Divider(height: 0.1),
-                                            ],
+                                          child: ListView.builder(
+                                            itemCount: categorylist.length,
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                child: ListTile(
+                                                  title: Container(
+                                                    padding: EdgeInsets.all(0),
+                                                    child: Column(
+                                                      children: [
+                                                        Divider(height: 0.1),
+                                                        _createMusicItem(
+                                                            categorylist[
+                                                                index]),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                onTap: () => subCategotyList(
+                                                    categorylist[index]),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ),
@@ -321,6 +329,62 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
             ),
           )),
         ));
+  }
+
+  subCategotyList(String subtype) async {
+    setState(() {
+      isLoading = true;
+    });
+    print("Calling");
+    Map data = {
+      'token': id,
+      'Category_id': 'Self-Development',
+    };
+    // print(newPassword);
+    print(data.toString());
+    final response = await http.post(
+      SHOW_DETAILS,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'category_name': 'Self-Development',
+      }),
+    );
+    print(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      setState(() {
+        isLoading = false;
+      });
+      Map<String, dynamic> resposne = jsonDecode(response.body);
+      //print(resposne.toString());
+      if (resposne['error'] == null) {
+        List<dynamic> user = resposne['show_details'];
+        //print(user.toString());
+        if (categorylist.isNotEmpty) {
+          // for (int i = 0; i < user.length; i++) {
+          //   Map temp = user[i];
+          //   print(temp['category_name']);
+          //   String tempS = temp['category_name'].toString();
+          //   categorylist.add(tempS);
+          // }
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      AudioListScreen(subtype, 'Self-Development')));
+        }
+      } else {
+        print(" ${resposne['error']}");
+      }
+      // _scaffoldKey.currentState
+      //     // ignore: deprecated_member_use
+      //     .showSnackBar(SnackBar(content: Text("${resposne['error']}")));
+    } else {
+      _scaffoldKey.currentState
+          // ignore: deprecated_member_use
+          .showSnackBar(SnackBar(content: Text("Please Try again")));
+    }
   }
 
   Widget _createMusicItem(String text) {
@@ -355,18 +419,13 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
               Expanded(
                 child: Container(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    "0:00",
-                    style: TextStyle(color: Colors.grey[800], fontSize: 10),
-                    textAlign: TextAlign.right,
-                  ),
+                  child: Icon(Icons.favorite_border),
                 ),
               )
             ],
           ),
         ),
       ),
-      onTap: null,
     );
   }
 
@@ -376,19 +435,18 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
     });
     print("Calling");
     Map data = {
-      'id': "6",
-      'Category_id': 'for_students',
+      'token': id,
+      'Category_id': 'Self-Development',
     };
     // print(newPassword);
     print(data.toString());
     final response = await http.post(
-      CATEGORY,
+      SHOW_DETAILS,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'token': id,
-        'Category_id': "for_students",
+        'category_name': 'Self-Development',
       }),
     );
     print(response.statusCode.toString());
@@ -397,22 +455,24 @@ class _SelfDevelopScreenState extends State<SelfDevelopScreen> {
         isLoading = false;
       });
       Map<String, dynamic> resposne = jsonDecode(response.body);
-      print(resposne.toString());
+      //print(resposne.toString());
       if (resposne['error'] == null) {
-        // Map<String, dynamic> user = resposne['data'];
-        // print(user.toString());
-        // print(" User name ${user['user_name']}");
-        //  savePref(1, user['user_name'], user['email'], user['id']);
-        //savePref(1, name, email);
-        _scaffoldKey.currentState
-            // ignore: deprecated_member_use
-            .showSnackBar(SnackBar(content: Text("${resposne['success']}")));
+        List<dynamic> user = resposne['show_details'];
+        //print(user.toString());
+        if (categorylist.isEmpty) {
+          for (int i = 0; i < user.length; i++) {
+            Map temp = user[i];
+            print(temp['category_name']);
+            String tempS = temp['category_name'].toString();
+            categorylist.add(tempS);
+          }
+        }
       } else {
         print(" ${resposne['error']}");
       }
-      _scaffoldKey.currentState
-          // ignore: deprecated_member_use
-          .showSnackBar(SnackBar(content: Text("${resposne['error']}")));
+      // _scaffoldKey.currentState
+      //     // ignore: deprecated_member_use
+      //     .showSnackBar(SnackBar(content: Text("${resposne['error']}")));
     } else {
       _scaffoldKey.currentState
           // ignore: deprecated_member_use

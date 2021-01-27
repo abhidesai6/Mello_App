@@ -65,7 +65,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                       _cardContainer("assets/images/shop2.png"),
                                       SizedBox(
                                           height: MediaQuery.of(context)
-                                                  .size
+                                                  .size  
                                                   .height *
                                               0.03),
                                       _cardContainer("assets/images/shop3.png"),

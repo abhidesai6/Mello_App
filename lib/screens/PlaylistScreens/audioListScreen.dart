@@ -1,65 +1,49 @@
 import 'dart:convert';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mello1/api.dart';
 import 'package:http/http.dart' as http;
-import 'package:mello1/drawerScreen.dart';
 import 'package:mello1/static.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class MyPlalistScreen extends StatefulWidget {
-  final String username, email;
-  MyPlalistScreen(this.username, this.email);
+class AudioListScreen extends StatefulWidget {
+  String subcategory;
+  String category;
+  AudioListScreen(this.subcategory, this.category);
   @override
-  _MyPlalistScreenState createState() => _MyPlalistScreenState();
+  _AudioListScreenState createState() => _AudioListScreenState();
 }
 
-class _MyPlalistScreenState extends State<MyPlalistScreen> {
-  SharedPreferences sharedPreferences;
-  String username;
-  String id;
-  List<String> categorylist = List<String>();
-  List<bool> boolList = List<bool>();
-  List<bool> boolList1 = List<bool>();
-  bool isLoading = false;
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  TextEditingController _oldPassword = new TextEditingController();
+class _AudioListScreenState extends State<AudioListScreen> {
   bool _isPlaying = false;
   bool _isPaused = false;
   AudioPlayer audioPlayer;
+  bool isLoading = false;
+  List<String> songList = List<String>();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
-    getcredentials();
+    categoryList();
     audioPlayer = AudioPlayer();
   }
 
-  getcredentials() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    //username = sharedPreferences.getString("user_name");
-    id = sharedPreferences.getString("id").toString();
-    print(id);
-    print("debug");
-    categoryList();
-  }
-
-  play(url, index) async {
-    boolList = List.filled(boolList.length, false);
-    boolList1 = List.filled(boolList.length, false);
+  play(url) async {
     int result = await audioPlayer.play(url);
     if (result == 1) {
       setState(() {
-        boolList[index] = true;
+        _isPlaying = true;
       });
     }
   }
 
-  pauseAudio(int index) async {
+  pauseAudio() async {
     int response = await audioPlayer.pause();
     if (response == 1) {
       setState(() {
-        boolList1[index] = true;
-        boolList[index] = false;
+        _isPaused = true;
+        _isPlaying = false;
       });
     } else {
       print('Some error occured in pausing');
@@ -76,12 +60,12 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
     }
   }
 
-  resumeAudio(index) async {
+  resumeAudio() async {
     int response = await audioPlayer.resume();
     if (response == 1) {
       setState(() {
-        boolList1[index] = false;
-        boolList[index] = true;
+        _isPaused = false;
+        _isPlaying = true;
       });
     } else {
       print('Some error occured in resuming');
@@ -92,10 +76,9 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
     return Scaffold(
         extendBodyBehindAppBar: true,
-        drawer: drawerScreen(context, widget.username, widget.email),
+        key: _scaffoldKey,
         body: Container(
           child: SafeArea(
               child: Center(
@@ -126,7 +109,7 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
                                               left: 35, bottom: 10),
                                           alignment: Alignment.bottomLeft,
                                           child: Text(
-                                            "Podcasts",
+                                            widget.subcategory,
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                                 color: Colors.grey[600],
@@ -148,57 +131,11 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
                                               child: Row(
                                                 children: [
                                                   Container(
-                                                    width: width * 0.27,
-                                                    height: height * 1,
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .only(top: 5),
-                                                              child:
-                                                                  Image.asset(
-                                                                "assets/images/Playlist1.png",
-                                                                width:
-                                                                    width * 0.2,
-                                                                height: height *
-                                                                    0.06,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                            height:
-                                                                height * 0.5),
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          child: Image.asset(
-                                                            "assets/images/Playlist2.png",
-                                                            width: width * 0.45,
-                                                            height:
-                                                                height * 0.15,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width: width * 0.63,
+                                                    width: width * 0.9,
                                                     child: Center(
                                                       child: ListView.builder(
                                                         itemCount:
-                                                            categorylist.length,
+                                                            songList.length,
                                                         itemBuilder:
                                                             (context, index) {
                                                           return GestureDetector(
@@ -209,28 +146,20 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
                                                                         .all(0),
                                                                 child: Column(
                                                                   children: [
-                                                                    Divider(
-                                                                        height:
-                                                                            0.1),
                                                                     _createMusicItem(
-                                                                        categorylist[
-                                                                            index],
-                                                                        index),
+                                                                        songList[
+                                                                            index]),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ),
                                                             onTap: () async {
-                                                              boolList[index]
-                                                                  ? boolList1[
-                                                                          index]
-                                                                      ? resumeAudio(
-                                                                          index)
-                                                                      : pauseAudio(
-                                                                          index)
+                                                              _isPlaying
+                                                                  ? _isPaused
+                                                                      ? resumeAudio()
+                                                                      : pauseAudio()
                                                                   : play(
-                                                                      "https://vrdesignsolutions.com/khushi_apps/assets/upload/${categorylist[index]}",
-                                                                      index);
+                                                                      "https://vrdesignsolutions.com/khushi_apps/assets/upload/${songList[index]}");
                                                             },
                                                           );
                                                         },
@@ -260,7 +189,7 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
         ));
   }
 
-  Widget _createMusicItem(String songName, int index) {
+  Widget _createMusicItem(String songName) {
     return ListTile(
       hoverColor: Colors.black,
       title: Container(
@@ -276,20 +205,19 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
                 child: Icon(
                   Icons.music_note,
                   color: Colors.white,
-                  size: 20,
                 ),
               ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.34,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   padding: EdgeInsets.only(left: 20.0, right: 20.0),
                   child: MarqueeWidget(
                       direction: Axis.horizontal,
                       child: Text(
                         songName,
                         style: TextStyle(
-                            fontWeight: boolList[index]
+                            fontWeight: _isPlaying
                                 ? FontWeight.bold
                                 : FontWeight.normal),
                       )),
@@ -297,7 +225,7 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
               ),
               Container(
                 alignment: Alignment.centerLeft,
-                child: Icon(boolList[index] ? Icons.pause : Icons.play_arrow),
+                child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
               )
             ],
           ),
@@ -313,20 +241,23 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
     });
     print("Calling");
     Map data = {
-      'auther_name': 'podcasts_songs',
+      'category_name': widget.category,
+      'sub_category_name': widget.subcategory,
     };
-    print(id);
+    // print(newPassword);
     print(data.toString());
     final response = await http.post(
-      PODCAST,
+      SUB_CATEGORY,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'auther_name': 'podcasts_songs',
+        'category_name': widget.category,
+        'sub_category_name': widget.subcategory,
       }),
     );
     print(response.statusCode.toString());
+    print("Debug");
     if (response.statusCode == 200) {
       setState(() {
         isLoading = false;
@@ -334,17 +265,14 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
       Map<String, dynamic> resposne = jsonDecode(response.body);
       print(resposne.toString());
       if (resposne['error'] == null) {
-        List<dynamic> user = resposne['podcast_details'];
+        List<dynamic> user = resposne['sub_category'];
         print(user.toString());
-        print(categorylist.toString());
-        if (categorylist.isEmpty) {
+        if (songList.isEmpty) {
           for (int i = 0; i < user.length; i++) {
             Map temp = user[i];
-            print(temp['audio_name']);
+            print(temp['image']);
             String tempS = temp['image'].toString();
-            categorylist.add(tempS);
-            boolList.add(false);
-            boolList1.add(false);
+            songList.add(tempS);
           }
         }
       } else {

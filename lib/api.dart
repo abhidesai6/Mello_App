@@ -5,3 +5,6 @@ const String CATEGORY = "$ROOT/Login/Category_details";
 const String PASSWORD = "https://vrdesignsolutions.com/khushi_apps/Login/change_password";
 const String PROFILE = "https://vrdesignsolutions.com/khushi_apps/Login/edit_profile";
 const String FORGOTPASS = "https://vrdesignsolutions.com/khushi_apps/Login/forgot_pass";
+const String SHOW_DETAILS = "https://vrdesignsolutions.com/khushi_apps/Login/show_details";
+const String PODCAST = "https://vrdesignsolutions.com/khushi_apps/Login/podcast_details";
+const String SUB_CATEGORY = "https://vrdesignsolutions.com/khushi_apps/Login/sub_category";

@@ -1,103 +1,79 @@
-// import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:mello1/localNotificationHelper.dart';
+// import 'package:mello1/screens/landingScreen.dart';
 
-// class LocalNotifiaction extends StatefulWidget {
+// class LocalNotificationWidget extends StatefulWidget {
 //   @override
-//   _LocalNotifiactionState createState() => _LocalNotifiactionState();
+//   _LocalNotificationWidgetState createState() =>
+//       _LocalNotificationWidgetState();
 // }
 
-// class _LocalNotifiactionState extends State<LocalNotifiaction> {
-//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-//   AndroidInitializationSettings androidInitializationSettings;
-//   IOSInitializationSettings iosInitializationSettings;
-//   InitializationSettings initializationSettings;
+// class _LocalNotificationWidgetState extends State<LocalNotificationWidget> {
+//   final notifications = FlutterLocalNotificationsPlugin();
 
 //   @override
 //   void initState() {
 //     super.initState();
-//     initializing();
-//   }
-//    Future<void> notification() async {
-//     AndroidNotificationDetails androidNotificationDetails =
-//         AndroidNotificationDetails(
-//             'Channel ID', 'Channel title', 'channel body',
-//             priority: Priority.high,
-//             importance: Importance.max,
-//             ticker: 'test');
 
-//     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+//     final settingsAndroid = AndroidInitializationSettings('mipmap/ic_launcher');
+//     final settingsIOS = IOSInitializationSettings(
+//         onDidReceiveLocalNotification: (id, title, body, payload) =>
+//             onSelectNotification(payload));
 
-//     NotificationDetails notificationDetails =
-//         NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-//     await flutterLocalNotificationsPlugin.show(
-//         0, 'Hello there', 'please subscribe my channel', notificationDetails);
-//   }
-
-//   Future<void> notificationAfterSec() async {
-//     var timeDelayed = DateTime.now().add(Duration(seconds: 5));
-//     AndroidNotificationDetails androidNotificationDetails =
-//         AndroidNotificationDetails(
-//             'second channel ID', 'second Channel title', 'second channel body',
-//             priority: Priority.high,
-//             importance: Importance.max,
-//             ticker: 'test');
-
-//     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
-
-//     NotificationDetails notificationDetails =
-//         NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-//     await flutterLocalNotificationsPlugin.schedule(1, 'Hello there',
-//         'please subscribe my channel', timeDelayed, notificationDetails);
-//   }
-
-//   void initializing() async {
-//     androidInitializationSettings = AndroidInitializationSettings('app_icon');
-//     iosInitializationSettings = IOSInitializationSettings(
-//         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-//     initializationSettings = InitializationSettings(
-//         android: androidNotificationDetails, iOS: iosNotificationDetails);
-//     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+//     notifications.initialize(
+//         InitializationSettings(android: settingsAndroid, iOS: settingsIOS),
 //         onSelectNotification: onSelectNotification);
 //   }
 
-//   void _showNotifications() async {
-//     await notification();
-//   }
-
-//   void _showNotificationsAfterSecond() async {
-//     await notificationAfterSec();
-//   }
-
- 
-
-//   Future onSelectNotification(String payLoad) {
-//     if (payLoad != null) {
-//       print(payLoad);
-//     }
-
-//     // we can set navigator to navigate another screen
-//   }
-
-//   Future onDidReceiveLocalNotification(
-//       int id, String title, String body, String payload) async {
-//     return CupertinoAlertDialog(
-//       title: Text(title),
-//       content: Text(body),
-//       actions: <Widget>[
-//         CupertinoDialogAction(
-//             isDefaultAction: true,
-//             onPressed: () {
-//               print("");
-//             },
-//             child: Text("Okay")),
-//       ],
-//     );
-//   }
+//   Future onSelectNotification(String payload) async => await Navigator.push(
+//         context,
+//         MaterialPageRoute(builder: (context) => LandingPage()),
+//       );
 
 //   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
+//   Widget build(BuildContext context) => Padding(
+//         padding: const EdgeInsets.all(8.0),
+//         child: ListView(
+//           children: <Widget>[
+//             title('Basics'),
+//             RaisedButton(
+//               child: Text('Show notification'),
+//               onPressed: () => showOngoingNotification(notifications,
+//                   title: 'Tite', body: 'Body'),
+//             ),
+//             RaisedButton(
+//               child: Text('Replace notification'),
+//               onPressed: () => showOngoingNotification(notifications,
+//                   title: 'ReplacedTitle', body: 'ReplacedBody'),
+//             ),
+//             RaisedButton(
+//               child: Text('Other notification'),
+//               onPressed: () => showOngoingNotification(notifications,
+//                   title: 'OtherTitle', body: 'OtherBody', id: 20),
+//             ),
+//             const SizedBox(height: 32),
+//             title('Feautures'),
+//             RaisedButton(
+//               child: Text('Silent notification'),
+//               onPressed: () => showSilentNotification(notifications,
+//                   title: 'SilentTitle', body: 'SilentBody', id: 30),
+//             ),
+//             const SizedBox(height: 32),
+//             title('Cancel'),
+//             RaisedButton(
+//               child: Text('Cancel all notification'),
+//               onPressed: notifications.cancelAll,
+//             ),
+//           ],
+//         ),
+//       );
+//   Widget title(String text) => Container(
+//         margin: EdgeInsets.symmetric(vertical: 4),
+//         child: Text(
+//           text,
+//           style: Theme.of(context).textTheme.title,
+//           textAlign: TextAlign.center,
+//         ),
+//       );
 // }
