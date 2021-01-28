@@ -497,6 +497,7 @@ class _PodcastScreenState extends State<PodcastScreen> {
             print(temp['category_name']);
             String tempS = temp['category_name'].toString();
             categorylist.add(tempS);
+            categorylist.toSet();
           }
         }
       } else {

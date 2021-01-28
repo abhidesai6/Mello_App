@@ -60,37 +60,3 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
 
 
 
-Widget _createMusicItem(String songName , BuildContext context) {
-    return ListTile(
-      hoverColor: Colors.black,
-      title: Container(
-        child: Center(
-          child: Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.purple,
-                ),
-                child: Icon(
-                  Icons.music_note,
-                  color: Colors.white,
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.37,
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: MarqueeWidget(
-                      direction: Axis.horizontal, child: Text(songName)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      onTap: null,
-    );
-  }

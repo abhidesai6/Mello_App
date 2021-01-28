@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:mello1/api.dart';
+import 'package:mello1/drawerScreen.dart';
+import 'package:mello1/screens/homeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileApp extends StatefulWidget {
-  final String username, email;
+  String username, email;
   bool isLoading;
   ProfileApp(this.username, this.email);
   @override
@@ -40,223 +42,233 @@ class _ProfileAppState extends State<ProfileApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: drawerScreen(context, widget.username, widget.email),
       key: _scaffoldKey,
-      body: Column(
-        children: <Widget>[
-          Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.purple, Colors.purpleAccent])),
-              child: Container(
-                width: double.infinity,
-                height: 350.0,
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          "${widget.username[0].toUpperCase()}",
-                          style: TextStyle(fontSize: 40, color: Colors.purple),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 350.0,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    'assets/images/Bg.png',
+                    fit: BoxFit.fitWidth,
+                  ),
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            "${widget.username[0].toUpperCase()}",
+                            style:
+                                TextStyle(fontSize: 40, color: Colors.purple),
+                          ),
+                          radius: 50.0,
                         ),
-                        radius: 50.0,
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        "${widget.username}",
-                        style: TextStyle(
-                          fontSize: 22.0,
-                          color: Colors.white,
+                        SizedBox(
+                          height: 10.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Card(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 5.0),
-                        clipBehavior: Clip.antiAlias,
-                        color: Colors.white,
-                        elevation: 5.0,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 22.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "Email",
-                                      style: TextStyle(
-                                        color: Colors.purpleAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "${widget.email}",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.purpleAccent,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                        Text(
+                          "${widget.username}",
+                          style: TextStyle(
+                            fontSize: 22.0,
+                            color: Colors.white,
                           ),
                         ),
-                      )
-                    ],
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Card(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 5.0),
+                          clipBehavior: Clip.antiAlias,
+                          color: Colors.white,
+                          elevation: 5.0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 22.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "Email",
+                                        style: TextStyle(
+                                          color: Colors.purple,
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+                                      Text(
+                                        "${widget.email}",
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.purple,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            TextFormField(
+              //obscureText: true,
+              decoration: new InputDecoration(
+                labelText: "New Username",
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.fromLTRB(20.0, 2.0, 20.0, 2.0),
+                border: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(25.0),
+                  borderSide: new BorderSide(),
                 ),
-              )),
-          SizedBox(
-            height: 20.0,
-          ),
-          TextFormField(
-            //obscureText: true,
-            decoration: new InputDecoration(
-              labelText: "New Username",
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 2.0, 20.0, 2.0),
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25.0),
-                borderSide: new BorderSide(),
+                //fillColor: Colors.green
               ),
-              //fillColor: Colors.green
-            ),
-            // ignore: missing_return
-            validator: (String value) {
-              if (value.trim().isEmpty) {
-                // ignore: deprecated_member_use
-                _scaffoldKey.currentState.showSnackBar(
-                    SnackBar(content: Text("Password is Required")));
-              }
-            },
-            keyboardType: TextInputType.visiblePassword,
-            style: new TextStyle(
-              fontFamily: "Poppins",
-            ),
-            controller: _username,
-            onSaved: (val) {
-              username = val;
-            },
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Container(
-            width: 300.00,
-            child: RaisedButton(
-                onPressed: () {},
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
-                elevation: 0.0,
-                padding: EdgeInsets.all(0.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                        colors: [Colors.purpleAccent, Colors.purple]),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: Container(
-                    constraints:
-                        BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Update Username",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.w300),
-                    ),
-                  ),
-                )),
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          TextFormField(
-            obscureText: true,
-            decoration: new InputDecoration(
-              labelText: "New Email id",
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 2.0, 20.0, 2.0),
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25.0),
-                borderSide: new BorderSide(),
+              // ignore: missing_return
+              validator: (String value) {
+                if (value.trim().isEmpty) {
+                  // ignore: deprecated_member_use
+                  _scaffoldKey.currentState.showSnackBar(
+                      SnackBar(content: Text("Password is Required")));
+                }
+              },
+              keyboardType: TextInputType.visiblePassword,
+              style: new TextStyle(
+                fontFamily: "Poppins",
               ),
-              //fillColor: Colors.green
+              controller: _username,
+              onSaved: (val) {
+                username = val;
+              },
             ),
-            // ignore: missing_return
-            validator: (String value) {
-              if (value.trim().isEmpty) {
-                // ignore: deprecated_member_use
-                _scaffoldKey.currentState.showSnackBar(
-                    SnackBar(content: Text("Password is Required")));
-              }
-            },
-            keyboardType: TextInputType.visiblePassword,
-            style: new TextStyle(
-              fontFamily: "Poppins",
+            SizedBox(
+              height: 20.0,
             ),
-            controller: _email,
-            onSaved: (val) {
-              email = val;
-            },
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Container(
-            width: 300.00,
-            child: RaisedButton(
-                onPressed: () {},
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
-                elevation: 0.0,
-                padding: EdgeInsets.all(0.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                        colors: [Colors.purpleAccent, Colors.purple]),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: Container(
-                    constraints:
-                        BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Update Email",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.w300),
+            Container(
+              width: 300.00,
+              child: RaisedButton(
+                  onPressed: () {
+                    editProfile(id, widget.email, _username.text);
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0)),
+                  elevation: 0.0,
+                  padding: EdgeInsets.all(0.0),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [Colors.purpleAccent, Colors.purple]),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
-                  ),
-                )),
-          ),
-        ],
+                    child: Container(
+                      constraints:
+                          BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Update Username",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26.0,
+                            fontWeight: FontWeight.w300),
+                      ),
+                    ),
+                  )),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            TextFormField(
+              decoration: new InputDecoration(
+                labelText: "New Email id",
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.fromLTRB(20.0, 2.0, 20.0, 2.0),
+                border: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(25.0),
+                  borderSide: new BorderSide(),
+                ),
+                //fillColor: Colors.green
+              ),
+              // ignore: missing_return
+              validator: (String value) {
+                if (value.trim().isEmpty) {
+                  // ignore: deprecated_member_use
+                  _scaffoldKey.currentState.showSnackBar(
+                      SnackBar(content: Text("Password is Required")));
+                }
+              },
+              keyboardType: TextInputType.visiblePassword,
+              style: new TextStyle(
+                fontFamily: "Poppins",
+              ),
+              controller: _email,
+              onSaved: (val) {
+                email = val;
+              },
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Container(
+              width: 300.00,
+              child: RaisedButton(
+                  onPressed: () {
+                    editProfile(id, _email.text, widget.username);
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0)),
+                  elevation: 0.0,
+                  padding: EdgeInsets.all(0.0),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [Colors.purpleAccent, Colors.purple]),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    child: Container(
+                      constraints:
+                          BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Update Email",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26.0,
+                            fontWeight: FontWeight.w300),
+                      ),
+                    ),
+                  )),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  changePassword(String id, String email, String username) async {
+  editProfile(String id, String email, String username) async {
     setState(() {
       isLoading = true;
     });
@@ -269,7 +281,7 @@ class _ProfileAppState extends State<ProfileApp> {
     print(username);
     print(data.toString());
     final response = await http.post(
-      PASSWORD,
+      PROFILE,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -291,7 +303,16 @@ class _ProfileAppState extends State<ProfileApp> {
         // print(user.toString());
         // print(" User name ${user['user_name']}");
         //  savePref(1, user['user_name'], user['email'], user['id']);
-        //savePref(1, name, email);
+        savePref(username, email);
+        setState(() {
+          widget.username = username;
+          widget.email = email;
+        });
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => HomePage(username, email)));
+
         _scaffoldKey.currentState
             // ignore: deprecated_member_use
             .showSnackBar(SnackBar(content: Text("${resposne['success']}")));
@@ -306,5 +327,15 @@ class _ProfileAppState extends State<ProfileApp> {
           // ignore: deprecated_member_use
           .showSnackBar(SnackBar(content: Text("Please Try again")));
     }
+  }
+
+  savePref(String username, String email) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    preferences.setString("user_name", username);
+    preferences.setString("email", email);
+    //preferences.setString("id", id.toString());
+    // ignore: deprecated_member_use
+    preferences.commit();
   }
 }

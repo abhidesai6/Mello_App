@@ -42,7 +42,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
                     ],
                   ),
                 ),
-                onTap: () => Navigator.pushReplacement(
+                onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
@@ -67,7 +67,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Favorite',
             fontsize: 17,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -76,7 +76,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Podcast',
             fontsize: 17,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -85,7 +85,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Explore',
             fontsize: 17,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -94,7 +94,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Infographics',
             fontsize: 17,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -103,7 +103,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Shop',
             fontsize: 17,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -117,7 +117,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Edit Profile',
             fontsize: 15,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -126,7 +126,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'Change Password',
             fontsize: 14,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
@@ -135,7 +135,7 @@ Widget drawerScreen(BuildContext context, String username, String email) {
           _createDrawerItem(
             text: 'About Mello',
             fontsize: 15,
-            onTap: () => Navigator.pushReplacement(
+            onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>

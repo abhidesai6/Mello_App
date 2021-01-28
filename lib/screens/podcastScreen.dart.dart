@@ -19,6 +19,8 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
   String username;
   String id;
   List<String> categorylist = List<String>();
+  List<String> authorName = List<String>();
+  List<String> songsName = List<String>();
   List<bool> boolList = List<bool>();
   List<bool> boolList1 = List<bool>();
   bool isLoading = false;
@@ -281,18 +283,35 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
               ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.34,
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: MarqueeWidget(
-                      direction: Axis.horizontal,
-                      child: Text(
-                        songName,
-                        style: TextStyle(
-                            fontWeight: boolList[index]
-                                ? FontWeight.bold
-                                : FontWeight.normal),
-                      )),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      child: MarqueeWidget(
+                          direction: Axis.horizontal,
+                          child: Text(
+                            songName,
+                            style: TextStyle(
+                                fontWeight: boolList[index]
+                                    ? FontWeight.bold
+                                    : FontWeight.normal),
+                          )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      child: MarqueeWidget(
+                          direction: Axis.horizontal,
+                          child: Text(
+                            "${songsName[index]}  , ${authorName[index]}",
+                            style: TextStyle(
+                                fontWeight: boolList[index]
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,fontSize:10),
+                          )),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -343,6 +362,8 @@ class _MyPlalistScreenState extends State<MyPlalistScreen> {
             print(temp['audio_name']);
             String tempS = temp['image'].toString();
             categorylist.add(tempS);
+            songsName.add(temp['audio_name']);
+            authorName.add(temp['other_name']);
             boolList.add(false);
             boolList1.add(false);
           }
