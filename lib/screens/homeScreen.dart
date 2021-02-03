@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:mello1/api.dart';
 import 'package:mello1/drawerScreen.dart';
+import 'package:mello1/screens/PlaylistScreens/audioListScreen.dart';
+import 'package:mello1/screens/feelingScreenAudioList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -14,6 +19,10 @@ class _HomePageState extends State<HomePage> {
   SharedPreferences sharedPreferences;
   String username;
   String username1;
+  String id;
+  List<String> categorylist = List<String>();
+  bool isLoading = false;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -59,22 +68,24 @@ class _HomePageState extends State<HomePage> {
                   width: MediaQuery.of(context).size.width * 1,
                   padding: EdgeInsets.fromLTRB(15, 18, 15, 18),
                   child: Center(
-                    child: Column(
-                      children: [
-                        _cardFeeling("I am feeling Stressed"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        _cardFeeling("I am feeling down"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        _cardFeeling("Not able to Concentrate"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        _cardFeeling("Low in Confidence"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        _cardFeeling("Others"),
-                      ],
+                    child: ListView.builder(
+                      itemCount: categorylist.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          child: ListTile(
+                            title: Container(
+                              padding: EdgeInsets.all(0),
+                              child: Column(
+                                children: [
+                                  Divider(height: 0.1),
+                                  _cardFeeling(categorylist[index], index),
+                                ],
+                              ),
+                            ),
+                          ),
+                          onTap: () => subCategotyList(categorylist[index]),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -130,6 +141,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     return Scaffold(
+        key: _scaffoldKey,
         extendBodyBehindAppBar: true,
         drawer: drawerScreen(context, widget.username, widget.email),
         body: SafeArea(
@@ -182,13 +194,13 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(24, 0, 14, 0),
-                  height: 130.0,
+                  height: 143,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
                       Container(
-                        width: 110,
-                        height: 130,
+                        width: 120,
+                        height: 143,
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -235,8 +247,8 @@ class _HomePageState extends State<HomePage> {
                         width: MediaQuery.of(context).size.width * 0.015,
                       ),
                       Container(
-                        width: 110,
-                        height: 130,
+                        width: 120,
+                        height: 143,
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -250,8 +262,8 @@ class _HomePageState extends State<HomePage> {
                                   "Classical Music has been found to help students perform 12 percent better on their exams.");
                             },
                             child: Container(
-                              width: 110,
-                              height: 130,
+                              width: 120,
+                              height: 143,
                               child: Column(
                                 children: [
                                   Text(
@@ -282,8 +294,8 @@ class _HomePageState extends State<HomePage> {
                         width: MediaQuery.of(context).size.width * 0.015,
                       ),
                       Container(
-                        width: 110,
-                        height: 130,
+                        width: 120,
+                        height: 143,
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -297,8 +309,8 @@ class _HomePageState extends State<HomePage> {
                                   "Studies have found that music with 50 to 80 beats per minute can enhance and stimulate creativity and learning.");
                             },
                             child: Container(
-                              width: 110,
-                              height: 130,
+                              width: 120,
+                              height: 143,
                               child: Column(
                                 children: [
                                   Text(
@@ -594,6 +606,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         print('Card tapped.');
                         _createStartDialog(context);
+                        categoryList();
                       },
                       child: Container(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -623,7 +636,7 @@ class _HomePageState extends State<HomePage> {
         ))));
   }
 
-  Widget _cardFeeling(String text) {
+  Widget _cardFeeling(String text, int index) {
     return Container(
       padding: EdgeInsets.all(8),
       width: MediaQuery.of(context).size.width * 0.7,
@@ -646,5 +659,64 @@ class _HomePageState extends State<HomePage> {
             fontSize: 19),
       ),
     );
+  }
+
+  categoryList() async {
+    setState(() {
+      isLoading = true;
+    });
+    print("Calling");
+    Map data = {
+      'auther_name': 'podcasts_songs',
+    };
+    print(id);
+    print(data.toString());
+    final response = await http.post(
+      FEELING_CATEGORY,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "category_data": "category_data",
+      }),
+    );
+    print(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      setState(() {
+        isLoading = false;
+      });
+      Map<String, dynamic> resposne = jsonDecode(response.body);
+      print(resposne.toString());
+      if (resposne['error'] == null) {
+        List<dynamic> user = resposne['Category_list'];
+        print(user.toString());
+        print(categorylist.toString());
+        if (categorylist.isEmpty) {
+          for (int i = 0; i < user.length; i++) {
+            Map temp = user[i];
+            print(temp['category']);
+            String tempS = temp['category'].toString();
+            categorylist.add(tempS);
+          }
+        }
+      } else {
+        print(" ${resposne['error']}");
+      }
+      // _scaffoldKey.currentState
+      //     // ignore: deprecated_member_use
+      //     .showSnackBar(SnackBar(content: Text("${resposne['error']}")));
+    } else {
+      _scaffoldKey.currentState
+          // ignore: deprecated_member_use
+          .showSnackBar(SnackBar(content: Text("Please Try again")));
+    }
+  }
+
+  subCategotyList(String subtype) async {
+    print("Calling");
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => FeelingListScreen(subtype)));
   }
 }

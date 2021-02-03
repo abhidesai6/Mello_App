@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mello1/localNotifications.dart';
-import 'package:mello1/screens/PlaylistScreens/audioScreen.dart';
+import 'package:mello1/Notification.dart';
 import 'package:mello1/screens/landingScreen.dart';
-import 'package:mello1/screens/profileScreen.dart';
-
 
 void main() async {
   runApp(MyApp());

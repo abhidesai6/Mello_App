@@ -32,15 +32,16 @@ dependencies:
   google_fonts: ^1.1.1
   permission_handler: ^5.0.1+1
   flutter_launcher_icons: ^0.8.1
-  webview_flutter: ^1.0.7
   http: ^0.12.2
   shared_preferences: ^0.5.12+4
-  flutter_webview_plugin: ^0.3.11
+  url_launcher: ^5.7.10
   readmore: ^1.0.1
   audioplayers: ^0.17.2
   flutter_local_notifications: ^3.0.3
   path_provider: ^1.6.27
   marquee: ^1.6.1
+  # timezone: ^0.6.1
+  flutter_native_timezone: ^1.0.4
   
 
 dev_dependencies:

@@ -20,6 +20,10 @@ class _AudioListScreenState extends State<AudioListScreen> {
   AudioPlayer audioPlayer;
   bool isLoading = false;
   List<String> songList = List<String>();
+  List<String> authorName = List<String>();
+  List<String> songsName = List<String>();
+  List<bool> boolList = List<bool>();
+  List<bool> boolList1 = List<bool>();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
@@ -29,21 +33,30 @@ class _AudioListScreenState extends State<AudioListScreen> {
     audioPlayer = AudioPlayer();
   }
 
-  play(url) async {
+  Future<bool> _willPopCallback() async {
+    // await showDialog or Show add banners or whatever
+    // then
+    audioPlayer.dispose();
+    return true; // return true if the route to be popped
+  }
+
+  play(url, index) async {
+    boolList = List.filled(boolList.length, false);
+    boolList1 = List.filled(boolList.length, false);
     int result = await audioPlayer.play(url);
     if (result == 1) {
       setState(() {
-        _isPlaying = true;
+        boolList[index] = true;
       });
     }
   }
 
-  pauseAudio() async {
+  pauseAudio(int index) async {
     int response = await audioPlayer.pause();
     if (response == 1) {
       setState(() {
-        _isPaused = true;
-        _isPlaying = false;
+        boolList1[index] = true;
+        boolList[index] = false;
       });
     } else {
       print('Some error occured in pausing');
@@ -60,12 +73,12 @@ class _AudioListScreenState extends State<AudioListScreen> {
     }
   }
 
-  resumeAudio() async {
+  resumeAudio(index) async {
     int response = await audioPlayer.resume();
     if (response == 1) {
       setState(() {
-        _isPaused = false;
-        _isPlaying = true;
+        boolList1[index] = false;
+        boolList[index] = true;
       });
     } else {
       print('Some error occured in resuming');
@@ -79,155 +92,186 @@ class _AudioListScreenState extends State<AudioListScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         key: _scaffoldKey,
-        body: Container(
-          child: SafeArea(
-              child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        Column(
-                          children: [
-                            AppBar(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              iconTheme: IconThemeData(color: Colors.grey[800]),
-                            ),
-                            SizedBox(height: height * 0.015),
-                            Column(
-                              children: [
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 35, bottom: 10),
-                                          alignment: Alignment.bottomLeft,
-                                          child: Text(
-                                            widget.subcategory,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Poppins",
-                                                fontSize: 25),
-                                          )),
-                                      Container(
-                                        child: Center(
-                                          child: Card(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            color: Colors.green[100],
-                                            child: Container(
-                                              height: height * 0.8,
-                                              width: width * 0.9,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: width * 0.9,
-                                                    child: Center(
-                                                      child: ListView.builder(
-                                                        itemCount:
-                                                            songList.length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          return GestureDetector(
-                                                            child: ListTile(
-                                                              title: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(0),
-                                                                child: Column(
-                                                                  children: [
-                                                                    _createMusicItem(
-                                                                        songList[
-                                                                            index]),
-                                                                  ],
+        body: WillPopScope(
+          onWillPop: _willPopCallback,
+          child: Container(
+            child: SafeArea(
+                child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          Column(
+                            children: [
+                              AppBar(
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                iconTheme:
+                                    IconThemeData(color: Colors.grey[800]),
+                              ),
+                              SizedBox(height: height * 0.015),
+                              Column(
+                                children: [
+                                  Center(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 35, bottom: 10),
+                                            alignment: Alignment.bottomLeft,
+                                            child: Text(
+                                              widget.subcategory,
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "Poppins",
+                                                  fontSize: 25),
+                                            )),
+                                        Container(
+                                          child: Center(
+                                            child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              color: Colors.green[100],
+                                              child: Container(
+                                                height: height * 0.8,
+                                                width: width * 0.9,
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: width * 0.9,
+                                                      child: Center(
+                                                        child: ListView.builder(
+                                                          itemCount:
+                                                              songList.length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return GestureDetector(
+                                                              child: ListTile(
+                                                                title:
+                                                                    Container(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              0),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      _createMusicItem(
+                                                                          songList[
+                                                                              index],
+                                                                          index),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            onTap: () async {
-                                                              _isPlaying
-                                                                  ? _isPaused
-                                                                      ? resumeAudio()
-                                                                      : pauseAudio()
-                                                                  : play(
-                                                                      "https://vrdesignsolutions.com/khushi_apps/assets/upload/${songList[index]}");
-                                                            },
-                                                          );
-                                                        },
+                                                              onTap: () async {
+                                                                boolList[index]
+                                                                    ? boolList1[
+                                                                            index]
+                                                                        ? resumeAudio(
+                                                                            index)
+                                                                        : pauseAudio(
+                                                                            index)
+                                                                    : play(
+                                                                        "https://vrdesignsolutions.com/khushi_apps/assets/upload/${songList[index]}",
+                                                                        index);
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+          ),
         ));
   }
 
-  Widget _createMusicItem(String songName) {
+  Widget _createMusicItem(String songName, int index) {
     return ListTile(
       hoverColor: Colors.black,
       title: Container(
         child: Center(
-          child: Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.purple,
+          child: SingleChildScrollView(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.purple,
+                  ),
+                  child: Icon(
+                    Icons.music_note,
+                    color: Colors.white,
+                  ),
                 ),
-                child: Icon(
-                  Icons.music_note,
-                  color: Colors.white,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: MarqueeWidget(
+                            direction: Axis.horizontal,
+                            child: Text(
+                              "${songsName[index]} ",
+                              style: TextStyle(
+                                  fontWeight: boolList[index]
+                                      ? FontWeight.bold
+                                      : FontWeight.normal),
+                            )),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: MarqueeWidget(
+                            direction: Axis.horizontal,
+                            child: Text(
+                              "${authorName[index]}   ,   ${songName}",
+                              style: TextStyle(
+                                  fontWeight: boolList[index]
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  fontSize: 10),
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: MarqueeWidget(
-                      direction: Axis.horizontal,
-                      child: Text(
-                        songName,
-                        style: TextStyle(
-                            fontWeight: _isPlaying
-                                ? FontWeight.bold
-                                : FontWeight.normal),
-                      )),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-              )
-            ],
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(boolList[index] ? Icons.pause : Icons.play_arrow),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -273,6 +317,10 @@ class _AudioListScreenState extends State<AudioListScreen> {
             print(temp['image']);
             String tempS = temp['image'].toString();
             songList.add(tempS);
+            songsName.add(temp['song_name']);
+            authorName.add(temp['aother_name']);
+            boolList.add(false);
+            boolList1.add(false);
           }
         }
       } else {

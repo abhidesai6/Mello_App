@@ -369,7 +369,7 @@ class _MotivationScreenState extends State<MotivationScreen> {
           //   String tempS = temp['category_name'].toString();
           //   categorylist.add(tempS);
           // }
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) =>

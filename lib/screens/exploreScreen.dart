@@ -4,55 +4,43 @@ import 'package:flutter/material.dart';
 import 'package:mello1/drawerScreen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExploreScreen extends StatefulWidget {
-  final String username,email;
-  ExploreScreen(this.username,this.email);
+  final String username, email;
+  ExploreScreen(this.username, this.email);
   @override
   _ExploreScreenState createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  // SharedPreferences sharedPreferences;
-  // String username;
-  // String username1;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getcredentials();
-  // }
-
-  // getcredentials() async {
-  //   sharedPreferences = await SharedPreferences.getInstance();
-  //   username1 = sharedPreferences.getString("user_name");
-  //   setState(() {});
-  //   // ignore: unnecessary_statements
-  //   (() {
-  //     username = username1[0].toUpperCase() + username1.substring(1);
-  //   });
-  //   // username = username1.toUpperCase();
-  // }
-
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
-
-  Widget _createWebView() {
-    return WebView(
-      initialUrl: "https://www.who.int/",
-      javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (WebViewController webViewController) {
-        _controller.complete(webViewController);
-
-        setState(() {});
-        // ignore: unnecessary_statements
-        (() {
-          if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-        });
-      },
-    );
+  launchURL() async {
+    const url = 'https://www.who.int';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
+
+  // final Completer<WebViewController> _controller =
+  //     Completer<WebViewController>();
+
+  // Widget _createWebView() {
+  //   return WebView(
+  //     initialUrl: "https://www.who.int/",
+  //     javascriptMode: JavascriptMode.unrestricted,
+  //     onWebViewCreated: (WebViewController webViewController) {
+  //       _controller.complete(webViewController);
+
+  //       setState(() {});
+  //       // ignore: unnecessary_statements
+  //       (() {
+  //         if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  //       });
+  //     },
+  //   );
+  // }
 
   _createDialog(String text, Color color, String text1, Color textColor) {
     return showDialog(
@@ -92,13 +80,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             ),
                             ReadMoreText(
                               text,
+                              textAlign: TextAlign.justify,
                               trimLines: 18,
                               colorClickableText: Colors.white,
-                              style: TextStyle(
-                                  color: textColor,
-                                  fontWeight: FontWeight.normal,
-                                  fontFamily: "Montserrat",
-                                  fontSize: 20),
+                              style: TextStyle(color: textColor, fontSize: 20),
                               trimMode: TrimMode.Line,
                               trimCollapsedText: 'Read more',
                               trimExpandedText: 'Show less',
@@ -124,7 +109,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         extendBodyBehindAppBar: true,
-        drawer: drawerScreen(context, widget.username,widget.email),
+        drawer: drawerScreen(context, widget.username, widget.email),
         body: Container(
           child: SafeArea(
               child: Center(
@@ -544,7 +529,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   splashColor: Colors.purple.withAlpha(30),
                                   onTap: () {
                                     print('Card tapped.');
-                                    _createWebView();
+                                    launchURL();
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(3),

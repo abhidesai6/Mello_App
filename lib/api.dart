@@ -8,3 +8,5 @@ const String FORGOTPASS = "https://vrdesignsolutions.com/khushi_apps/Login/forgo
 const String SHOW_DETAILS = "https://vrdesignsolutions.com/khushi_apps/Login/show_details";
 const String PODCAST = "https://vrdesignsolutions.com/khushi_apps/Login/podcast_details";
 const String SUB_CATEGORY = "https://vrdesignsolutions.com/khushi_apps/Login/sub_category";
+const String FEELING_CATEGORY = "https://vrdesignsolutions.com/khushi_apps/Login/feeling_Category";
+const String FEELING_SONG_CATEGORY = "https://vrdesignsolutions.com/khushi_apps/Login/category_feeling_songs";
